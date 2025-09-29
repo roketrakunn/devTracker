@@ -32,7 +32,7 @@ var validXpGain = map[string]int{
 	"Learned a new vim motion/Trick": 1000,
 }
 
-func main() {
+func notmain() {
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	tag := addCmd.String("tag", "", "Optional tag for the entry")
 
