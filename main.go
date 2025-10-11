@@ -24,15 +24,15 @@ const logFile = "log.json"
 const xpFile = "xp.json"
 
 var validXpGain = map[string]int{
-"Learned Go":                 100,
+"Learned Go":                 120,
 	"Learned Rust":               120,
 	"Did easy leetcode":          20,
 	"Did medium leetcode":        40,
 	"Did hard leetcode":          70,
-	"Learned a new vim motion/Trick": 1000,
+	"Learned a new vim motion/Trick": 40,
 }
 
-func notmain() {
+func main() {
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	tag := addCmd.String("tag", "", "Optional tag for the entry")
 
@@ -72,7 +72,7 @@ func saveLog(message, tag string) {
 	entry := LogEntry{
 		Timestamp: time.Now(),
 		Entry:     message,
-		Tag:       tag,
+		Tag:       tag, //could be how you feel hahaha... 
 	}
 
 	var logs []LogEntry
@@ -93,7 +93,7 @@ func saveLog(message, tag string) {
 func rewardXp(entry LogEntry) {
 	for key, xp := range validXpGain {
 		if strings.Contains(strings.ToLower(entry.Entry), strings.ToLower(key)) {
-			fmt.Printf("Gained %d XP for: %q\n", xp, key)
+			fmt.Printf("Gained %d XP for: %q\n", xp, entry.Entry)
 
 			stats := loadXp()
 			stats.Total += xp
