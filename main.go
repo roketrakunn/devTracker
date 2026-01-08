@@ -24,7 +24,7 @@ const logFile = "log.json"
 const xpFile = "xp.json"
 
 var validXpGain = map[string]int{
-"Learned Go":                 120,
+	"Learned Go":                 120,
 	"Learned Rust":               120,
 	"Did easy leetcode":          20,
 	"Did medium leetcode":        40,
@@ -202,7 +202,6 @@ func  showStreak(){
 		fmt.Println("No logs availbe yet")
 		return
 	}
-
 
 	json.Unmarshal(data , &logs)
 
