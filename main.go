@@ -26,6 +26,7 @@ const xpFile = "xp.json"
 var validXpGain = map[string]int{
 	"Learned Go":                 120,
 	"Learned Rust":               120,
+	"Learned Zig":				  100, //new ... 
 	"Did easy leetcode":          20,
 	"Did medium leetcode":        40,
 	"Did hard leetcode":          70,
