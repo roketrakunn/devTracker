@@ -26,7 +26,7 @@ const xpFile = "xp.json"
 var validXpGain = map[string]int{
 	"Learned Go":                 120,
 	"Learned Rust":               120,
-	"Learned Zig":				  100, //new ... 
+	"Learned Zig":				  100,
 	"Did easy leetcode":          20,
 	"Did medium leetcode":        40,
 	"Did hard leetcode":          70,
@@ -53,15 +53,15 @@ func main() {
 		saveLog(entry, *tag)
 
 	case "today":
-		showToday()
+		showToday()//Get today's logs
 
-	case "xp":
+	case "xp": // get your total xp
 		stats := loadXp()
 		fmt.Printf("Total XP: %d\n", stats.Total)
 
-	case "progress":
+	case "progress": // your overrall progress
 		showProgress()
-	case "streak": 
+	case "streak":  //if you are that guy
 		showStreak()
 
 	default:
