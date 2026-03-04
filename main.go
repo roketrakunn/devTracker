@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
 )
 
 type LogEntry struct {
@@ -31,6 +30,24 @@ var validXpGain = map[string]int{
 	"Did medium leetcode":        40,
 	"Did hard leetcode":          70,
 	"Learned a new vim motion/Trick": 40,
+}
+
+var stopWords = map[string]bool{
+	"did": true, "a": true, "an": true, "the": true,
+	"new": true, "learned": true, "some": true, "i": true,
+	"and": true, "or": true, "for": true, "to": true,
+}
+
+func extractKeywords(s string) []string {
+	words := strings.Fields(strings.ToLower(s))
+	var keywords []string
+	for _, w := range words {
+		w = strings.Trim(w, ".,!?/")
+		if !stopWords[w] && len(w) > 1 {
+			keywords = append(keywords, w)
+		}
+	}
+	return keywords
 }
 
 func main() {
@@ -91,19 +108,35 @@ func saveLog(message, tag string) {
 	rewardXp(entry)
 }
 
-func rewardXp(entry LogEntry) {
+func matchXp(entry string) (string, int) {
+	entryLower := strings.ToLower(entry)
+	bestKey, bestXp, bestMatches := "", 0, 0
+
 	for key, xp := range validXpGain {
-		if strings.Contains(strings.ToLower(entry.Entry), strings.ToLower(key)) {
-			fmt.Printf("Gained %d XP for: %q\n", xp, entry.Entry)
-
-			stats := loadXp()
-			stats.Total += xp
-			saveXp(stats)
-
-			return
+		keywords := extractKeywords(key)
+		matches := 0
+		for _, kw := range keywords {
+			if strings.Contains(entryLower, kw) {
+				matches++
+			}
+		}
+		if matches > bestMatches || (matches == bestMatches && matches > 0 && xp > bestXp) {
+			bestKey, bestXp, bestMatches = key, xp, matches
 		}
 	}
-	fmt.Println("Definitely a waste of time!")
+	return bestKey, bestXp
+}
+
+func rewardXp(entry LogEntry) {
+	key, xp := matchXp(entry.Entry)
+	if key != "" {
+		fmt.Printf("Gained %d XP for: %q\n", xp, entry.Entry)
+		stats := loadXp()
+		stats.Total += xp
+		saveXp(stats)
+	} else {
+		fmt.Println("Definitely a waste of time!")
+	}
 }
 
 func loadXp() XpStats {
@@ -163,12 +196,10 @@ func showProgress() {
 	progress := make(map[string]int)
 
 	for _, log := range logs {
-		date := log.Timestamp.Format("Monday") // or "2006-01-02"
-		for key, xp := range validXpGain {
-			if strings.Contains(strings.ToLower(log.Entry), strings.ToLower(key)) {
-				progress[date] += xp
-				break
-			}
+		date := log.Timestamp.Format("Monday")
+		_, xp := matchXp(log.Entry)
+		if xp > 0 {
+			progress[date] += xp
 		}
 	}
 
